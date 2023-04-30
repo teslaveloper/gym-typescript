@@ -1,17 +1,27 @@
+import { useEffect, useContext } from 'react';
 import { useForm } from "react-hook-form";
 import { SelectedPage } from "@/shared/types";
 import { motion } from "framer-motion";
 import ContactUsPageGraphic from "@/assets/ContactUsPageGraphic.png";
 import HText from "@/shared/HText";
-import { useMutationContactUs } from '@/hooks/graph/useMutationContactUs';
+import { AuthContext } from '@/AuthProviderManager';
+import { useMutationLogin } from '@/hooks/graph/useMutationLogin';
 
 
 type Props = {
   setSelectedPage: (value: SelectedPage) => void;
 };
 
-const ContactUs = ({ setSelectedPage }: Props) => {
-  const { CreateContactUs, data, loading, error, reset } = useMutationContactUs();
+const LogIn = ({ setSelectedPage }: Props) => {
+  const { storeToken } = useContext(AuthContext);
+  const { Login, data, loading, error, reset } = useMutationLogin();
+
+  useEffect(() =>{
+    if ( data && data?.createAuth ) {
+      console.log('createAuth si hay data', data.createAuth.token);
+      storeToken(data.createAuth.token);
+    }
+  }, [data?.createAuth]);
 
   const inputStyles = `mb-5 w-full rounded-lg bg-primary-300
   px-5 py-3 placeholder-white`;
@@ -26,18 +36,14 @@ const ContactUs = ({ setSelectedPage }: Props) => {
   const onSubmit = async (e: any) => {
     e.preventDefault();
     const values = getValues()
-    // const isValid = await trigger();
-    // if (!isValid) {
-    //   e.preventDefault();
-    // }
-    console.log('values', getValues())
-    CreateContactUs({variables: values });
+    console.log('login values', getValues())
+    Login({variables: values });
   };
 
   return (
-    <section id="contactus" className="mx-auto w-5/6 pt-24 pb-32">
+    <section id="login" className="mx-auto w-5/6 pt-24 pb-32">
       <motion.div
-        onViewportEnter={() => setSelectedPage(SelectedPage.ContactUs)}
+        onViewportEnter={() => setSelectedPage(SelectedPage.LogIn)}
       >
         {/* HEADER */}
         <motion.div
@@ -52,12 +58,10 @@ const ContactUs = ({ setSelectedPage }: Props) => {
           }}
         >
           <HText>
-            <span className="text-primary-500">JOIN NOW</span> TO GET IN SHAPE
+            <span className="text-primary-500">LOGIN</span>
           </HText>
           <p className="my-5">
-            Congue adipiscing risus commodo placerat. Tellus et in feugiat nisl
-            sapien vel rhoncus. Placerat at in enim pellentesque. Nulla
-            adipiscing leo egestas nisi elit risus sit. Nunc cursus sagittis.
+            Ingresa con energía y siente la transformación en tu cuerpo - ¡Bienvenido a nuestro portal de fitness y nutrición!
           </p>
         </motion.div>
 
@@ -79,39 +83,6 @@ const ContactUs = ({ setSelectedPage }: Props) => {
               onSubmit={onSubmit}
               method="POST"
             >
-              <input
-                className={inputStyles}
-                type="text"
-                placeholder="FIRST NAME"
-                {...register("first_name", {
-                  required: true,
-                  maxLength: 100,
-                })}
-              />
-              {errors.first_name && (
-                <p className="mt-1 text-primary-500">
-                  {errors.first_name.type === "required" && "This field is required."}
-                  {errors.first_name.type === "maxLength" &&
-                    "Max length is 100 char."}
-                </p>
-              )}
-
-              <input
-                className={inputStyles}
-                type="text"
-                placeholder="LAST NAME"
-                {...register("last_name", {
-                  required: true,
-                  maxLength: 100,
-                })}
-              />
-              {errors.last_name && (
-                <p className="mt-1 text-primary-500">
-                  {errors.last_name.type === "required" && "This field is required."}
-                  {errors.last_name.type === "maxLength" &&
-                    "Max length is 100 char."}
-                </p>
-              )}
 
               <input
                 className={inputStyles}
@@ -130,30 +101,29 @@ const ContactUs = ({ setSelectedPage }: Props) => {
                 </p>
               )}
 
-              <textarea
+              <input
                 className={inputStyles}
-                placeholder="MESSAGE"
-                rows={4}
-                cols={50}
-                {...register("message", {
+                type="text"
+                placeholder="Password"
+                {...register("password", {
                   required: true,
-                  maxLength: 2000,
+                  maxLength: 100,
                 })}
               />
-              {errors.message && (
+              {errors.password && (
                 <p className="mt-1 text-primary-500">
-                  {errors.message.type === "required" &&
-                    "This field is required."}
-                  {errors.message.type === "maxLength" &&
-                    "Max length is 2000 char."}
+                  {errors.password.type === "required" && "This field is required."}
+                  {errors.password.type === "maxLength" &&
+                    "Max length is 100 char."}
                 </p>
               )}
+
 
               <button
                 type="submit"
                 className="mt-5 rounded-lg bg-secondary-500 px-20 py-3 transition duration-500 hover:text-white"
               >
-                SUBMIT
+                Login
               </button>
             </form>
           </motion.div>
@@ -183,4 +153,4 @@ const ContactUs = ({ setSelectedPage }: Props) => {
   );
 };
 
-export default ContactUs;
+export default LogIn;

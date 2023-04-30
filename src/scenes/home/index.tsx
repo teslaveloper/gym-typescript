@@ -62,7 +62,7 @@ const Home = ({ setSelectedPage }: Props) => {
               visible: { opacity: 1, x: 0 },
             }}
           >
-            <ActionButton setSelectedPage={setSelectedPage}>
+            <ActionButton setSelectedPage={setSelectedPage} targetSelection={SelectedPage.ContactUs}>
               Join Now
             </ActionButton>
             <AnchorLink
